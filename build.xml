@@ -1,0 +1,12 @@
+<project name="Main.java" default="run">
+    <target name="compile">
+        <mkdir dir="build"/>
+        <javac srcdir="src" destdir="build" includeantruntime="false"/>
+    </target>
+    <target name="run" depends="compile">
+        <java classname="Main" classpath="build"/>
+    </target>
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+</project>
