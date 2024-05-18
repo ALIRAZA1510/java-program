@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.InputMismatchException;
 
 public class TicTacToe {
     private static char[][] board = new char[3][3];
@@ -6,31 +7,45 @@ public class TicTacToe {
 
     public static void main(String[] args) {
         initializeBoard();
+        System.out.println("Welcome to Tic-Tac-Toe!");
+        System.out.println("Player X and Player O take turns to place their marks on the board.");
         printBoard();
 
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("Player " + currentPlayer + ", enter your move (row [1-3] column [1-3]):");
-            int row = scanner.nextInt() - 1;
-            int col = scanner.nextInt() - 1;
+            int row = -1, col = -1;
+            boolean validInput = false;
 
-            if (isValidMove(row, col)) {
-                board[row][col] = currentPlayer;
-                printBoard();
+            while (!validInput) {
+                try {
+                    System.out.println("Player " + currentPlayer + ", enter your move (row [1-3] column [1-3]):");
+                    row = scanner.nextInt() - 1;
+                    col = scanner.nextInt() - 1;
 
-                if (isWinner()) {
-                    System.out.println("Player " + currentPlayer + " wins!");
-                    break;
-                } else if (isBoardFull()) {
-                    System.out.println("It's a draw!");
-                    break;
+                    if (isValidMove(row, col)) {
+                        validInput = true;
+                    } else {
+                        System.out.println("Invalid move. The cell is either occupied or out of range. Please try again.");
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Invalid input. Please enter numbers between 1 and 3.");
+                    scanner.next(); // Clear the invalid input
                 }
-
-                currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
-            } else {
-                System.out.println("Invalid move. Please try again.");
             }
+
+            board[row][col] = currentPlayer;
+            printBoard();
+
+            if (isWinner()) {
+                System.out.println("Player " + currentPlayer + " wins!");
+                break;
+            } else if (isBoardFull()) {
+                System.out.println("It's a draw!");
+                break;
+            }
+
+            currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
         }
 
         scanner.close();
@@ -45,14 +60,16 @@ public class TicTacToe {
     }
 
     private static void printBoard() {
-        System.out.println("-------------");
+        System.out.println("  1 2 3");
+        System.out.println("  ------");
         for (int i = 0; i < 3; i++) {
-            System.out.print("| ");
+            System.out.print((i + 1) + "| ");
             for (int j = 0; j < 3; j++) {
-                System.out.print(board[i][j] + " | ");
+                System.out.print(board[i][j] + " ");
             }
-            System.out.println("\n-------------");
+            System.out.println("|");
         }
+        System.out.println("  ------");
     }
 
     private static boolean isValidMove(int row, int col) {
